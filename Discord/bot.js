@@ -1,6 +1,9 @@
+const process = require('node:process')
+const path = require('node:path')
 const dotenv = require('dotenv')
 const { Client, Events, IntentsBitField, Partials } = require('discord.js')
-const cmd = require('./deploy_commands.js')
+const NYXB = require('@nyxb/commands')
+const cj = require('consolji')
 const settings = require('./settings.json')
 const initializeCronJobs = require('./cronJobHandler.js')
 const createFolders = require('./folderHandler.js')
@@ -14,42 +17,19 @@ const client = new Client({
 
 client.login(process.env.TOKEN)
 
-cmd.registerCommands(client)
+client.once(Events.ClientReady, () => {
+  cj.log('🤖 Beep Boop i\'m Ready!')
 
-client.once(Events.ClientReady, async (_c) => {
-  console.log('Bot Ready!')
-
-  // Erstellen der Verzeichnisse für jede Klasse
   for (const role_id in settings.roles) {
     const class_name = settings.roles[role_id]
     createFolders(class_name)
   }
 
-  // Initialisieren des ausgelagerten Cronjobs
   initializeCronJobs(client)
-  console.log('Scheduled Cron Job!')
-})
 
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isChatInputCommand())
-    return
+  new NYXB(client, {
+    commandsDir: path.join(__dirname, 'commands'),
+  })
 
-  const command = interaction.client.commands.get(interaction.commandName)
-
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`)
-    return
-  }
-
-  try {
-    await command.execute(interaction, client)
-  }
-  catch (error) {
-    console.error(error)
-    if (interaction.replied || interaction.deferred)
-      await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true })
-
-    else
-      await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-  }
+  cj.log('Scheduled Cron Job!')
 })
