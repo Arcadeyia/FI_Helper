@@ -15,12 +15,9 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User, Partials.GuildMember, Partials.GuildScheduledEvent],
 })
 
-client.login(process.env.TOKEN)
-
 client.once(Events.ClientReady, () => {
   cj.log('🤖 Beep Boop i\'m Ready!')
 
-  // Hier iterieren wir jetzt durch die Klassen in der config.js
   Object.entries(config.classes).forEach(([_, classConfig]) => {
     const class_name = classConfig.roleId
     createFolders(class_name)
@@ -35,3 +32,10 @@ client.once(Events.ClientReady, () => {
 
   cj.log('Scheduled Cron Job!')
 })
+
+// Verwenden des entsprechenden Tokens basierend auf der Umgebung
+client.login(
+  process.env.PROD === 'true'
+    ? process.env.PROD_DISCORD_TOKEN
+    : process.env.DEV_DISCORD_TOKEN,
+)
