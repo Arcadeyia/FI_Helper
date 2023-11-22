@@ -1,38 +1,44 @@
 const fs = require('node:fs')
 
 function getAllReports(class_name) {
-  const path = `Report/${class_name}/`
-  packet = []
-  paths = []
-  count = 0
-  fs.readdirSync(path).forEach((file) => {
-    paths.push(`Report/${class_name}/${file}`)
-    count++
-    if (count == 10) {
-      count = 0
-      packet.push(paths)
-      paths = []
+  const reportPath = `Report/${class_name}/`
+  const reportPackets = []
+  let reportFiles = []
+  let fileCount = 0
+
+  fs.readdirSync(reportPath).forEach((file) => {
+    reportFiles.push(`${reportPath}${file}`)
+    fileCount++
+
+    if (fileCount === 10) {
+      fileCount = 0
+      reportPackets.push(reportFiles)
+      reportFiles = []
     }
   })
-  packet.push(paths)
-  return packet
+
+  // Fügen Sie die verbleibenden Dateien zum letzten Paket hinzu, falls vorhanden
+  if (reportFiles.length > 0)
+    reportPackets.push(reportFiles)
+
+  return reportPackets
 }
+
 function getReportFromWeek(class_name, week) {
-  const year = new Date().getFullYear()
-  paths = []
-  for (let i = 1; i <= 20; i++) {
-    path = `Report/${class_name}/KW${week}_${i}_${year}.pdf`
-    if (fs.existsSync(path))
-      paths.push(path)
+  const currentYear = new Date().getFullYear()
+  const reportPaths = []
+
+  for (let weekIndex = 1; weekIndex <= 20; weekIndex++) {
+    const reportPath = `Report/${class_name}/KW${week}_${weekIndex}_${currentYear}.pdf`
+
+    if (fs.existsSync(reportPath))
+      reportPaths.push(reportPath)
 
     else
       break
   }
-  if (paths.length == 0)
-    return false
 
-  else
-    return paths
+  return reportPaths.length === 0 ? false : reportPaths
 }
 
 module.exports = { getAllReports, getReportFromWeek }
