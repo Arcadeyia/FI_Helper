@@ -18,6 +18,11 @@
     "bot",
     "fachinformatiker"
   ],
+  "scripts": {
+    "start": "node discord/index.js",
+    "dev": "nodemon discord/index.js",
+    "lint": "eslint ."
+  },
   "dependencies": {
     "@nyxb/commands": "^1.0.0",
     "discord.js": "^14.14.1",
@@ -28,6 +33,7 @@
     "@nyxb/eslint-config": "^1.0.6",
     "@nyxb/nyxi": "^0.0.31",
     "conmitmoji": "^0.0.12",
-    "consolji": "^0.1.5"
+    "consolji": "^0.1.5",
+    "nodemon": "^3.0.1"
   }
 }
