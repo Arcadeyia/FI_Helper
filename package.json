@@ -19,11 +19,15 @@
     "fachinformatiker"
   ],
   "dependencies": {
+    "@nyxb/commands": "^1.0.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
-    "@nyxb/eslint-config": "^1.0.6"
+    "@nyxb/eslint-config": "^1.0.6",
+    "@nyxb/nyxi": "^0.0.31",
+    "conmitmoji": "^0.0.12",
+    "consolji": "^0.1.5"
   }
 }
