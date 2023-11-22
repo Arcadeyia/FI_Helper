@@ -1,52 +1,57 @@
 const fs = require('node:fs')
 const https = require('node:https')
-const { SlashCommandBuilder } = require('discord.js')
+const { CommandType } = require('@nyxb/commands')
 const config = require('../../config.js')
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('upload')
-    .setDescription('Upload Report or Schedule.')
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName('report')
-        .setDescription('Upload Report for Class')
-        .addAttachmentOption(option =>
-          option.setName('attachment')
-            .setDescription('The PDF to Upload')
-            .setRequired(true))
-        .addIntegerOption(option =>
-          option.setName('week')
-            .setDescription('The week of the Report/Schedule')
-            .setRequired(true))
-        .addIntegerOption(option =>
-          option.setName('year')
-            .setDescription('The Year of the Report/Schedule')
-            .setRequired(true)),
-    )
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName('schedule')
-        .setDescription('Upload Schedule for Class')
-        .addAttachmentOption(option =>
-          option.setName('attachment')
-            .setDescription('The PDF to Upload')
-            .setRequired(true))
-        .addIntegerOption(option =>
-          option.setName('week')
-            .setDescription('The week of the Report/Schedule')
-            .setRequired(true))
-        .addIntegerOption(option =>
-          option.setName('year')
-            .setDescription('The Year of the Report/Schedule')
-            .setRequired(true)
-            .setMinValue(2000)
-            .setMaxValue(2050),
-        ),
-    ),
+  category: 'Upload', // Kategorie des Befehls
+  description: 'Upload Report or Schedule', // Beschreibung des Befehls
 
-  async execute(interaction, client) {
-    const sub_command = interaction.options.getSubcommand()
+  slash: CommandType.BOTH,
+  testOnly: true,
+  guildOnly: true,
+
+  options: [
+    {
+      name: 'type',
+      description: 'Choose the type of upload',
+      type: 'STRING',
+      required: true,
+      choices: [
+        {
+          name: 'Report',
+          value: 'report',
+        },
+        {
+          name: 'Schedule',
+          value: 'schedule',
+        },
+      ],
+    },
+    {
+      name: 'attachment',
+      description: 'The PDF to Upload',
+      type: 'ATTACHMENT',
+      required: true,
+    },
+    {
+      name: 'week',
+      description: 'The week of the Report/Schedule',
+      type: 'INTEGER',
+      required: true,
+    },
+    {
+      name: 'year',
+      description: 'The Year of the Report/Schedule',
+      type: 'INTEGER',
+      required: true,
+      minValue: 2000,
+      maxValue: 2050,
+    },
+  ],
+
+  callback: async ({ interaction, client }) => {
+    const type = interaction.options.getString('type')
     const attachment = interaction.options.getAttachment('attachment')
     const week = interaction.options.getInteger('week')
     const year = interaction.options.getInteger('year')
@@ -55,39 +60,28 @@ module.exports = {
 
     Object.entries(config.classes).forEach(([classNameValue, classConfig]) => {
       if (interaction.member.roles.cache.has(classConfig.roleId)) {
-        channelId = classConfig[sub_command === 'report' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
+        channelId = classConfig[type === 'report' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
         className = classNameValue
       }
     })
 
-    if (!className || !channelId) {
-      await interaction.reply({ content: 'You do not have a role associated with any class or channel.', ephemeral: true })
-      return
+    if (!className || !channelId)
+      return 'You do not have a role associated with any class or channel.'
+
+    let filePath
+    for (let i = 1; i <= 10; i++) {
+      filePath = `${type === 'report' ? 'Report' : 'Schedule'}/${className}/KW${week}_${i}_${year}.pdf`
+      if (!fs.existsSync(filePath))
+        break
     }
 
-    let path
-    if (sub_command === 'report') {
-      for (let i = 1; i <= 10; i++) {
-        path = `Report/${className}/KW${week}_${i}_${year}.pdf`
-        if (!fs.existsSync(path))
-          break
-      }
-    }
-    else {
-      for (let i = 1; i <= 10; i++) {
-        path = `Schedule/${className}/KW${week}_${i}_${year}.pdf`
-        if (!fs.existsSync(path))
-          break
-      }
-    }
-
-    const file = fs.createWriteStream(path)
+    const file = fs.createWriteStream(filePath)
     https.get(attachment.url, (response) => {
       response.pipe(file)
       file.on('finish', async () => {
         file.close()
         await interaction.reply({ content: 'File Uploaded!', ephemeral: true })
-        client.channels.cache.get(channelId).send({ content: `New ${sub_command} available for Week ${week}!`, files: [path] })
+        client.channels.cache.get(channelId).send({ content: `New ${type} available for Week ${week}!`, files: [filePath] })
       })
     })
   },
