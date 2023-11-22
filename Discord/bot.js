@@ -32,7 +32,12 @@ client.once(Events.ClientReady, async c => {
 
         for (const role_id in settings.roles) {
             const class_name = settings.roles[role_id]
-            schedule.downloadSchedules(class_name, cur_week)
+            schedule.downloadSchedules(class_name, cur_week, (path) => {
+                client.channels.cache.get(settings.channels.schedule[role_id]).send({
+                    content: `New Schedule Available!`,
+                    files: [path]
+                })
+            })
 
         }
 
