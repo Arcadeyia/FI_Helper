@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 const { Client, Events, IntentsBitField, Partials } = require('discord.js')
 const NYXB = require('@nyxb/commands')
 const cj = require('consolji')
-const settings = require('./settings.json')
+const config = require('./config.js') // Importieren der neuen Konfigurationsdatei
 const initializeCronJobs = require('./cronJobHandler.js')
 const createFolders = require('./folderHandler.js')
 
@@ -20,10 +20,11 @@ client.login(process.env.TOKEN)
 client.once(Events.ClientReady, () => {
   cj.log('🤖 Beep Boop i\'m Ready!')
 
-  for (const role_id in settings.roles) {
-    const class_name = settings.roles[role_id]
+  // Hier iterieren wir jetzt durch die Klassen in der config.js
+  Object.entries(config.classes).forEach(([_, classConfig]) => {
+    const class_name = classConfig.roleId
     createFolders(class_name)
-  }
+  })
 
   initializeCronJobs(client)
 
