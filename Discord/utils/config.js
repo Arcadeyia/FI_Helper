@@ -1,5 +1,6 @@
 const config = {
   baseUrl: 'https://service.viona24.com/stpusnl/daten/US_IT_2023_Sommer_Aug_',
+  testServerId: '1176992766002200586',
 
   classes: {
     FIAE_A: {
