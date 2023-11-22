@@ -1,26 +1,29 @@
 {
-   "name": "fachinformatiker-discord-bot",
-   "version": "0.0.1",
-   "packageManager": "pnpm@8.10.5",
-   "description": "",
-   "author": "Aurelia Schuberth <aurelia@arcadeyia.com>",
-   "license": "MIT",
-   "homepage": "https://fachinformatiker.site",
-   "repository": {
-     "type": "git",
-     "url": "git+https://github.com/FachinformatikerLabs/Fachinformatiker-Discord-Bot"
-   },
-   "bugs": {
-     "url": "https://github.com/FachinformatikerLabs/Fachinformatiker-Discord-Bot/issues"
-   },
-   "keywords": [
-       "discord",
-       "bot",
-       "fachinformatiker"
-    ],
+  "name": "fachinformatiker-discord-bot",
+  "version": "0.0.1",
+  "packageManager": "pnpm@8.10.5",
+  "description": "",
+  "author": "Aurelia Schuberth <aurelia@arcadeyia.com>",
+  "license": "MIT",
+  "homepage": "https://fachinformatiker.site",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FachinformatikerLabs/Fachinformatiker-Discord-Bot"
+  },
+  "bugs": {
+    "url": "https://github.com/FachinformatikerLabs/Fachinformatiker-Discord-Bot/issues"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "fachinformatiker"
+  ],
   "dependencies": {
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@nyxb/eslint-config": "^1.0.6"
   }
 }
