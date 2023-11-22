@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "nyxb.materialiconic",
+    "nyxb.materialiconic-product-icons",
+    "nyxb.nesting-config",
+    "nyxb.open-on-github"
+  ]
+}
