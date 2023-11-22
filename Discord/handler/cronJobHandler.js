@@ -1,7 +1,7 @@
 const cron = require('node-cron')
 const cj = require('consolji')
 const schedule = require('./schedule.js')
-const settings = require('./settings.json')
+const config = require('./config.js')
 
 function initializeCronJobs(client) {
   cron.schedule('0 * * * *', () => {
@@ -9,15 +9,14 @@ function initializeCronJobs(client) {
     const cur_week = getCurrentWeek()
     console.log('Downloading Schedule...')
 
-    for (const role_id in settings.roles) {
-      const class_name = settings.roles[role_id]
-      schedule.downloadSchedules(class_name, cur_week, (path) => {
-        client.channels.cache.get(settings.channels.schedule[role_id]).send({
+    Object.entries(config.classes).forEach(([className, classConfig]) => {
+      schedule.downloadSchedules(className, cur_week, (path) => {
+        client.channels.cache.get(classConfig.stundenplanChannelId).send({
           content: `New Schedule Available!`,
           files: [path],
         })
       })
-    }
+    })
 
     cj.log('Cron Job Finished!')
   })
