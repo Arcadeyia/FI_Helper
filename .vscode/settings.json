@@ -37,10 +37,10 @@
     "json",
     "jsonc",
     "yaml"
-],
-"cSpell.words": [
-   "conmitmoji",
-   "FIAE",
-   "FISI"
-]
+  ],
+  "cSpell.words": [
+    "conmitmoji",
+    "FIAE",
+    "FISI"
+  ]
 }
