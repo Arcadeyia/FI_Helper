@@ -1,6 +1,8 @@
-const config = {
+const process = require('node:process')
+
+const prodConfig = {
   baseUrl: 'https://service.viona24.com/stpusnl/daten/US_IT_2023_Sommer_Aug_',
-  testServerId: '1176992766002200586',
+  guild: '1176992766002200586',
 
   classes: {
     FIAE_A: {
@@ -53,10 +55,65 @@ const config = {
       reportChannelId: '1173985878155202590',
       scheduleChannelId: '1173985913701937173',
     },
-    // Weitere Klassen und deren Zuordnungen...
   },
-
-  // Weitere Konfigurationselemente nach Bedarf...
 }
 
-module.exports = config
+const testConfig = {
+  baseUrl: 'https://service.viona24.com/stpusnl/daten/US_IT_2023_Sommer_Aug_',
+  guild: '1176992766002200586',
+
+  classes: {
+    FIAE_A: {
+      roleId: '1176992766023188504',
+      reportChannelId: '1176992770750165140',
+      scheduleChannelId: '1176992770750165141',
+    },
+    FIAE_B: {
+      roleId: '1176992766023188503',
+      reportChannelId: '1176992771198943387',
+      scheduleChannelId: '1176992771198943389',
+    },
+    FIAE_C: {
+      roleId: '1176992766023188502',
+      reportChannelId: '1176992771630972986',
+      scheduleChannelId: '1176992771630972988',
+    },
+    FIAE_D: {
+      roleId: '1176992766023188501',
+      reportChannelId: '1176992772025233596',
+      scheduleChannelId: '1176992772364959784',
+    },
+    FISI_A_1: {
+      roleId: '1176992766023188500',
+      reportChannelId: '1176992772364959793',
+      scheduleChannelId: '1176992772843126834',
+    },
+    FISI_A_2: {
+      roleId: '1176992766002200595',
+      reportChannelId: '1176992773203832995',
+      scheduleChannelId: '1176992773203832996',
+    },
+    FISI_B: {
+      roleId: '1176992766002200594',
+      reportChannelId: '1176992773753274439',
+      scheduleChannelId: '1176992773753274440',
+    },
+    FISI_C: {
+      roleId: '1176992766002200593',
+      reportChannelId: '1176992774172721213',
+      scheduleChannelId: '1176992774172721214',
+    },
+    FISI_D: {
+      roleId: '1176992766002200592',
+      reportChannelId: '1176992774621507585',
+      scheduleChannelId: '1176992774621507586',
+    },
+    FISI_E: {
+      roleId: '1176992766002200591',
+      reportChannelId: '1176992775116423251',
+      scheduleChannelId: '1176992775116423252',
+    },
+  },
+}
+
+module.exports = process.env.PROD === 'true' ? prodConfig : testConfig
