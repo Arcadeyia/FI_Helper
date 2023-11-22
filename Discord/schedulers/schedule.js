@@ -1,17 +1,17 @@
 const fs = require('node:fs')
 const https = require('node:https')
 const crypto = require('node:crypto')
-const settings = require('./settings.json')
+const config = require('./config.js')
 
 function getAllSchedules(class_name) {
   const path = `Schedule/${class_name}/`
-  packet = []
-  paths = []
-  count = 0
+  const packet = []
+  let paths = []
+  let count = 0
   fs.readdirSync(path).forEach((file) => {
     paths.push(`Schedule/${class_name}/${file}`)
     count++
-    if (count == 10) {
+    if (count === 10) {
       count = 0
       packet.push(paths)
       paths = []
@@ -20,31 +20,31 @@ function getAllSchedules(class_name) {
   packet.push(paths)
   return packet
 }
+
 function getScheduleFromWeek(class_name, week) {
   const year = new Date().getFullYear()
-  paths = []
+  const paths = []
   for (let i = 1; i <= 20; i++) {
-    path = `Schedule/${class_name}/KW${week}_${i}_${year}.pdf`
+    const path = `Schedule/${class_name}/KW${week}_${i}_${year}.pdf`
     if (fs.existsSync(path))
       paths.push(path)
 
     else
       break
   }
-  if (paths.length == 0)
-    return false
-
-  else
-    return paths
+  return paths.length === 0 ? false : paths
 }
 
 function downloadSchedules(class_name, week, callback) {
   const file = fs.createWriteStream(`Schedule/${class_name}/temp.pdf`)
   const year = new Date().getFullYear()
-  const url = `${settings.base_url}${class_name}_${year}_abKW${week}.pdf`
+  const url = `${config.baseUrl}${class_name}_${year}_abKW${week}.pdf`
+
   https.get(url, (response) => {
-    if (response.statusCode != 200)
-      return console.log('File not found')
+    if (response.statusCode !== 200) {
+      console.log('File not found')
+      return
+    }
 
     response.pipe(file)
     file.on('finish', () => {
@@ -57,39 +57,45 @@ function downloadSchedules(class_name, week, callback) {
 
 function compareSchedules(class_name, week, callback) {
   const year = new Date().getFullYear()
-  temp_file = `Schedule/${class_name}/temp.pdf`
-  for (var i = 1; i <= 4; i++) {
+  const temp_file = `Schedule/${class_name}/temp.pdf`
+  let old_file = ''
+  let path = ''
+  let i
+
+  for (i = 1; i <= 4; i++) {
     path = `Schedule/${class_name}/KW${week}_${i}_${year}.pdf`
-    if (!fs.existsSync(path))
-      break
+    if (fs.existsSync(path))
+      old_file = path
 
     else
-      old_file = path
+      break
   }
 
-  if (i != 1) {
-    if (getHash(old_file) != getHash(temp_file)) {
-      console.log('Different hash ,saving...')
+  if (i !== 1) {
+    if (getHash(old_file) !== getHash(temp_file)) {
+      console.log('Different hash, saving...')
       fs.rename(temp_file, path, (err) => {
-
+        if (err)
+          console.error(err)
+        callback(path)
       })
-      callback(path)
     }
     else {
       console.log('Same Hash, Deleting Temp File...')
       fs.unlink(temp_file, (err) => {
         if (err)
-          console.log(err)
-        else
-          console.log('Temp File Deleted!')
+          console.error(err)
+        else console.log('Temp File Deleted!')
       })
     }
   }
   else {
-    console.log('Schedule for the week doenst exist! Saving...')
+    console.log('Schedule for the week doesn’t exist! Saving...')
     fs.rename(temp_file, path, (err) => {
+      if (err)
+        console.error(err)
+      callback(path)
     })
-    callback(path)
   }
 }
 
@@ -97,8 +103,7 @@ function getHash(file) {
   const hashSum = crypto.createHash('sha256')
   const fileBuffer = fs.readFileSync(file)
   hashSum.update(fileBuffer)
-  const hex = hashSum.digest('hex')
-  return hex
+  return hashSum.digest('hex')
 }
 
 module.exports = { getAllSchedules, getScheduleFromWeek, downloadSchedules, compareSchedules }
