@@ -30,6 +30,7 @@ client.once(Events.ClientReady, () => {
 
   new NYXB(client, {
     commandsDir: path.join(__dirname, 'commands'),
+    testServers: [config.testServerId],
   })
 
   cj.log('Scheduled Cron Job!')
