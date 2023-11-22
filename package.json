@@ -19,8 +19,8 @@
     "fachinformatiker"
   ],
   "scripts": {
-    "start": "node discord/index.js",
-    "dev": "nodemon discord/index.js",
+    "start": "node discord/bot.js",
+    "dev": "nodemon discord/bot.js",
     "lint": "eslint ."
   },
   "dependencies": {
