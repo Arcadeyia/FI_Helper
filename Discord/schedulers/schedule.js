@@ -3,42 +3,50 @@ const https = require('node:https')
 const crypto = require('node:crypto')
 const config = require('./config.js')
 
-function getAllSchedules(class_name) {
-  const path = `Schedule/${class_name}/`
-  const packet = []
-  let paths = []
-  let count = 0
-  fs.readdirSync(path).forEach((file) => {
-    paths.push(`Schedule/${class_name}/${file}`)
-    count++
-    if (count === 10) {
-      count = 0
-      packet.push(paths)
-      paths = []
+function getAllSchedules(className) {
+  const schedulePath = `Schedule/${className}/`
+  const scheduleBatches = []
+  let scheduleFiles = []
+  let fileCount = 0
+
+  fs.readdirSync(schedulePath).forEach((file) => {
+    scheduleFiles.push(`${schedulePath}${file}`)
+    fileCount++
+
+    if (fileCount === 10) {
+      fileCount = 0
+      scheduleBatches.push(scheduleFiles)
+      scheduleFiles = []
     }
   })
-  packet.push(paths)
-  return packet
+
+  if (scheduleFiles.length > 0)
+    scheduleBatches.push(scheduleFiles)
+
+  return scheduleBatches
 }
 
-function getScheduleFromWeek(class_name, week) {
-  const year = new Date().getFullYear()
-  const paths = []
-  for (let i = 1; i <= 20; i++) {
-    const path = `Schedule/${class_name}/KW${week}_${i}_${year}.pdf`
-    if (fs.existsSync(path))
-      paths.push(path)
+function getScheduleFromWeek(className, week) {
+  const currentYear = new Date().getFullYear()
+  const schedulePaths = []
+
+  for (let weekIndex = 1; weekIndex <= 20; weekIndex++) {
+    const scheduleFilePath = `Schedule/${className}/KW${week}_${weekIndex}_${currentYear}.pdf`
+
+    if (fs.existsSync(scheduleFilePath))
+      schedulePaths.push(scheduleFilePath)
 
     else
       break
   }
-  return paths.length === 0 ? false : paths
+
+  return schedulePaths.length === 0 ? false : schedulePaths
 }
 
-function downloadSchedules(class_name, week, callback) {
-  const file = fs.createWriteStream(`Schedule/${class_name}/temp.pdf`)
-  const year = new Date().getFullYear()
-  const url = `${config.baseUrl}${class_name}_${year}_abKW${week}.pdf`
+function downloadSchedules(className, week, callback) {
+  const tempFilePath = `Schedule/${className}/temp.pdf`
+  const currentYear = new Date().getFullYear()
+  const url = `${config.baseUrl}${className}_${currentYear}_abKW${week}.pdf`
 
   https.get(url, (response) => {
     if (response.statusCode !== 200) {
@@ -46,55 +54,42 @@ function downloadSchedules(class_name, week, callback) {
       return
     }
 
-    response.pipe(file)
-    file.on('finish', () => {
-      file.close()
-      console.log(`Finished Download for ${class_name}, Comparing....`)
-      compareSchedules(class_name, week, callback)
-    })
+    response.pipe(fs.createWriteStream(tempFilePath))
+      .on('finish', () => {
+        console.log(`Finished Download for ${className}, Comparing....`)
+        compareSchedules(className, week, tempFilePath, callback)
+      })
   })
 }
 
-function compareSchedules(class_name, week, callback) {
-  const year = new Date().getFullYear()
-  const temp_file = `Schedule/${class_name}/temp.pdf`
-  let old_file = ''
-  let path = ''
-  let i
+function compareSchedules(className, week, tempFilePath, callback) {
+  const currentYear = new Date().getFullYear()
+  let existingFilePath = ''
+  let newFilePath = ''
 
-  for (i = 1; i <= 4; i++) {
-    path = `Schedule/${class_name}/KW${week}_${i}_${year}.pdf`
-    if (fs.existsSync(path))
-      old_file = path
+  for (let fileIndex = 1; fileIndex <= 4; fileIndex++) {
+    newFilePath = `Schedule/${className}/KW${week}_${fileIndex}_${currentYear}.pdf`
 
-    else
+    if (!fs.existsSync(newFilePath)) {
+      existingFilePath = newFilePath
       break
+    }
   }
 
-  if (i !== 1) {
-    if (getHash(old_file) !== getHash(temp_file)) {
-      console.log('Different hash, saving...')
-      fs.rename(temp_file, path, (err) => {
-        if (err)
-          console.error(err)
-        callback(path)
-      })
-    }
-    else {
-      console.log('Same Hash, Deleting Temp File...')
-      fs.unlink(temp_file, (err) => {
-        if (err)
-          console.error(err)
-        else console.log('Temp File Deleted!')
-      })
-    }
-  }
-  else {
-    console.log('Schedule for the week doesn’t exist! Saving...')
-    fs.rename(temp_file, path, (err) => {
+  if (existingFilePath && (getHash(existingFilePath) !== getHash(tempFilePath))) {
+    console.log('Different hash, saving...')
+    fs.rename(tempFilePath, existingFilePath, (err) => {
       if (err)
         console.error(err)
-      callback(path)
+      callback(existingFilePath)
+    })
+  }
+  else {
+    console.log('Same Hash, Deleting Temp File...')
+    fs.unlink(tempFilePath, (err) => {
+      if (err)
+        console.error(err)
+      else console.log('Temp File Deleted!')
     })
   }
 }
