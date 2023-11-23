@@ -1,26 +1,40 @@
 const cron = require('node-cron')
 const cj = require('consolji')
-const schedule = require('./schedule.js')
-const config = require('./config.js')
+const schedule = require('../schedulers/stundenplan.js')
+const config = require('../utils/config.js')
 
 function initializeCronJobs(client) {
-  cron.schedule('0 * * * *', () => {
-    cj.log('Running Cron Job....')
+  cron.schedule('*/30 * * * * *', () => {
+    cj.log('Starte meine Arbeit 🏗️....')
     const cur_week = getCurrentWeek()
-    console.log('Downloading Schedule...')
+    cj.log('Lade Stundenpläne...')
 
-    Object.entries(config.classes).forEach(([className, classConfig]) => {
-      schedule.downloadSchedules(className, cur_week, (path) => {
-        client.channels.cache.get(classConfig.stundenplanChannelId).send({
-          content: `New Schedule Available!`,
-          files: [path],
+    Object.entries(config.klassen).forEach(([klassenName, klassenConfig]) => {
+      schedule.downloadSchedules(klassenName, cur_week)
+        .then((path) => {
+          if (path) {
+            cj.log(`Versuche, Stundenplan zu senden für: ${klassenName}`)
+            client.channels.cache.get(klassenConfig.stundenplanChannelId).send({
+              content: `Neuer Stundenplan verfügbar!`,
+              files: [path],
+            }).catch((error) => {
+              console.error(`Fehler beim Senden der Nachricht für ${klassenName}: ${error}`)
+            })
+          }
+          else {
+            cj.log(`Keine Änderung im Stundenplan für ${klassenName}.`)
+          }
         })
-      })
+        .catch((error) => {
+          console.error(`Fehler beim Herunterladen des Stundenplans für ${klassenName}: ${error}`)
+        })
     })
 
-    cj.log('Cron Job Finished!')
+    cj.log('Arbeit beendet 🏡')
   })
 }
+
+module.exports = initializeCronJobs
 
 function getCurrentWeek() {
   const currentDate = new Date()
@@ -30,5 +44,3 @@ function getCurrentWeek() {
 
   return weekNumber
 }
-
-module.exports = initializeCronJobs
