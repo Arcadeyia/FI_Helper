@@ -1,21 +1,21 @@
-const fs = require('node:fs')
-const https = require('node:https')
-const { CommandType } = require('@nyxb/commands')
-const config = require('../../config.js')
+const fs = require('fs');
+const https = require('https');
+const { CommandType } = require('@nyxb/commands');
+const { ApplicationCommandOptionType } = require('discord.js');
+const config = require('../../utils/config.js');
 
 module.exports = {
-  category: 'Upload', // Kategorie des Befehls
-  description: 'Upload Report or Schedule', // Beschreibung des Befehls
-
-  slash: CommandType.BOTH,
-  testOnly: true,
-  guildOnly: true,
+   category: 'Upload',
+   description: 'Upload Report or Schedule',
+   type: CommandType.BOTH,
+   testOnly: true,
+   guildOnly: true,
 
   options: [
     {
       name: 'type',
       description: 'Choose the type of upload',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
       choices: [
         {
@@ -31,19 +31,19 @@ module.exports = {
     {
       name: 'attachment',
       description: 'The PDF to Upload',
-      type: 'ATTACHMENT',
+      type: ApplicationCommandOptionType.Attachment,
       required: true,
     },
     {
       name: 'week',
       description: 'The week of the Report/Schedule',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       required: true,
     },
     {
       name: 'year',
       description: 'The Year of the Report/Schedule',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       required: true,
       minValue: 2000,
       maxValue: 2050,
@@ -56,21 +56,21 @@ module.exports = {
     const week = interaction.options.getInteger('week')
     const year = interaction.options.getInteger('year')
 
-    let channelId, className
+    let channelId, klassenName
 
-    Object.entries(config.classes).forEach(([classNameValue, classConfig]) => {
-      if (interaction.member.roles.cache.has(classConfig.roleId)) {
-        channelId = classConfig[type === 'report' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
-        className = classNameValue
+    Object.entries(config.klassen).forEach(([klasse, klassenConfig]) => {
+      if (interaction.member.roles.cache.has(klassenConfig.rollenId)) {
+        channelId = klassenConfig[type === 'report' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
+        klassenName = klasse
       }
     })
 
-    if (!className || !channelId)
+    if (!klassenName || !channelId)
       return 'You do not have a role associated with any class or channel.'
 
     let filePath
     for (let i = 1; i <= 10; i++) {
-      filePath = `${type === 'report' ? 'Report' : 'Schedule'}/${className}/KW${week}_${i}_${year}.pdf`
+      filePath = `${type === 'report' ? 'Report' : 'Schedule'}/${klassenName}/KW${week}_${i}_${year}.pdf`
       if (!fs.existsSync(filePath))
         break
     }
