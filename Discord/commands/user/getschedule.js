@@ -1,12 +1,13 @@
 const { CommandType } = require('@nyxb/commands')
-const schedule = require('../../schedulers/schedule.js')
-const config = require('../../config.js')
+const { ApplicationCommandOptionType } = require('discord.js')
+const cj = require('consolji')
+const schedule = require('../../schedulers/stundenplan.js')
+const config = require('../../utils/config.js')
 
 module.exports = {
-  category: 'Schedule', // Kategorie des Befehls
-  description: 'Receive Schedules.', // Beschreibung des Befehls
-
-  slash: CommandType.BOTH,
+  category: 'Schedule',
+  description: 'Receive Schedules.',
+  type: CommandType.BOTH,
   testOnly: true,
   guildOnly: true,
 
@@ -14,7 +15,7 @@ module.exports = {
     {
       name: 'type',
       description: 'Type of schedule to fetch',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
       choices: [
         {
@@ -30,7 +31,7 @@ module.exports = {
     {
       name: 'week',
       description: 'The week number for the schedule',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       required: false,
     },
   ],
@@ -38,34 +39,39 @@ module.exports = {
   callback: async ({ interaction }) => {
     const type = interaction.options.getString('type')
     const week = interaction.options.getInteger('week')
-    let class_name
+    let klassenName
 
-    Object.entries(config.classes).forEach(([className, classConfig]) => {
+    cj.log('Benutzerrollen-IDs:', interaction.member.roles.cache.map(role => role.id))
+    cj.log('Konfigurierte Klassenrollen-IDs:', Object.values(config.classes).map(c => c.roleId))
+
+    Object.entries(config.classes).forEach(([zugewieseneKlasse, classConfig]) => {
       if (interaction.member.roles.cache.has(classConfig.roleId))
-        class_name = className
+        klassenName = zugewieseneKlasse
     })
 
-    if (!class_name)
-      return `You do not have a role associated with any class.`
+    cj.log('Gefundener Klassenname:', klassenName)
+
+    if (!klassenName)
+      return `Du hast keine Rolle die mit deiner Klasse verbunden ist. Bitte wende dich an einen Orga.`
 
     if (type === 'all') {
-      const schedule_packets = schedule.getAllSchedules(class_name)
+      const schedule_packets = schedule.getAllSchedules(klassenName)
       schedule_packets.forEach((packet, index) => {
-        interaction.user.send({ content: `All available Schedules for ${class_name}! ${index + 1}/${schedule_packets.length}`, files: packet })
+        interaction.user.send({ content: `Alle verfügbaren Stundenpläne für ${klassenName}! ${index + 1}/${schedule_packets.length}`, files: packet })
       })
-      return `Sending a DM with all Schedules for ${class_name}!`
+      return `Versenden eines DM mit allen Stundenplänen für ${klassenName}!`
     }
     else if (type === 'week') {
       if (!week)
-        return `Please provide a week number.`
+        return `Bitte gib eine Wochenzahl an.`
 
-      const schedule_files = schedule.getScheduleFromWeek(class_name, week)
+      const schedule_files = schedule.getScheduleFromWeek(klassenName, week)
       if (schedule_files) {
-        interaction.user.send({ content: `Schedules for ${class_name} from week ${week}`, files: schedule_files })
-        return `Sending a DM with Schedules for ${class_name} for week ${week}.`
+        interaction.user.send({ content: `Stundenpläne für ${klassenName} ab Woche ${week}`, files: schedule_files })
+        return `Versenden einer DM mit Stundenplänen für ${klassenName} für Woche ${week}.`
       }
       else {
-        return `No available Schedules for ${class_name} for week ${week}`
+        return `Keine verfügbaren Stundenpläne für ${klassenName} für Woche ${week}`
       }
     }
   },
