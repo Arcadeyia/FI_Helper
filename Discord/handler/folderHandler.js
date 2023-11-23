@@ -1,16 +1,19 @@
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
+const path = require('node:path')
+const process = require('node:process')
+const cj = require('consolji')
 
-function createFolders(class_name) {
-  const path_schedule = `Schedule/${class_name}`
-  const path_report = `Report/${class_name}`
-  if (!fs.existsSync(path_schedule)) {
-    console.log(`Path for ${class_name} Schedules does not exist! Creating...`)
-    fs.mkdirSync(path_schedule, { recursive: true })
+async function createFolders(klassenName) {
+  const path_stundenplan = path.join(process.cwd(), 'data', 'Stundenplan', klassenName)
+  const path_berichte = path.join(process.cwd(), 'data', 'Berichte', klassenName)
+
+  try {
+    await fs.mkdir(path_stundenplan, { recursive: true })
+    await fs.mkdir(path_berichte, { recursive: true })
+    cj.log(`Created folders for ${klassenName}`)
   }
-
-  if (!fs.existsSync(path_report)) {
-    console.log(`Path for ${class_name} Reports does not exist! Creating...`)
-    fs.mkdirSync(path_report, { recursive: true })
+  catch (err) {
+    console.error(`Error creating directories for ${klassenName}:`, err)
   }
 }
 
