@@ -44,7 +44,7 @@ client.once(Events.ClientReady, async () => {
     ],
   })
 
-  cj.log('Stundenplan Cron Job!')
+  cj.log('Starte Stundenplan Cron Job! 📅')
 })
 
 client.login(
