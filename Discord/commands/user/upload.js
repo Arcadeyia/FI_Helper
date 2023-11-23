@@ -1,48 +1,48 @@
-const fs = require('fs');
-const https = require('https');
-const { CommandType } = require('@nyxb/commands');
-const { ApplicationCommandOptionType } = require('discord.js');
-const config = require('../../utils/config.js');
+const fs = require('node:fs')
+const https = require('node:https')
+const { CommandType } = require('@nyxb/commands')
+const { ApplicationCommandOptionType } = require('discord.js')
+const config = require('../../utils/config.js')
 
 module.exports = {
-   category: 'Upload',
-   description: 'Upload Report or Schedule',
-   type: CommandType.BOTH,
-   testOnly: true,
-   guildOnly: true,
+  category: 'Upload',
+  description: 'Bericht oder Stundenplan hochladen',
+  type: CommandType.BOTH,
+  testOnly: true,
+  guildOnly: true,
 
   options: [
     {
-      name: 'type',
-      description: 'Choose the type of upload',
+      name: 'typ',
+      description: 'Wähle die Art des Uploads',
       type: ApplicationCommandOptionType.String,
       required: true,
       choices: [
         {
-          name: 'Report',
-          value: 'report',
+          name: 'Bericht',
+          value: 'bericht',
         },
         {
-          name: 'Schedule',
-          value: 'schedule',
+          name: 'Stundenplan',
+          value: 'stundenplan',
         },
       ],
     },
     {
-      name: 'attachment',
-      description: 'The PDF to Upload',
+      name: 'anhang',
+      description: 'Die hochzuladende PDF',
       type: ApplicationCommandOptionType.Attachment,
       required: true,
     },
     {
       name: 'week',
-      description: 'The week of the Report/Schedule',
+      description: 'Die Woche des Berichts/Stundenplans',
       type: ApplicationCommandOptionType.Integer,
       required: true,
     },
     {
       name: 'year',
-      description: 'The Year of the Report/Schedule',
+      description: 'Das Jahr des Berichts/Stundenplans',
       type: ApplicationCommandOptionType.Integer,
       required: true,
       minValue: 2000,
@@ -51,8 +51,8 @@ module.exports = {
   ],
 
   callback: async ({ interaction, client }) => {
-    const type = interaction.options.getString('type')
-    const attachment = interaction.options.getAttachment('attachment')
+    const typ = interaction.options.getString('typ')
+    const anhang = interaction.options.getAttachment('anhang')
     const week = interaction.options.getInteger('week')
     const year = interaction.options.getInteger('year')
 
@@ -60,28 +60,28 @@ module.exports = {
 
     Object.entries(config.klassen).forEach(([klasse, klassenConfig]) => {
       if (interaction.member.roles.cache.has(klassenConfig.rollenId)) {
-        channelId = klassenConfig[type === 'report' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
+        channelId = klassenConfig[typ === 'bericht' ? 'berichtsheftChannelId' : 'stundenplanChannelId']
         klassenName = klasse
       }
     })
 
     if (!klassenName || !channelId)
-      return 'You do not have a role associated with any class or channel.'
+      return 'Du hast keine Rolle, die mit einer Klasse oder einem Kanal verbunden ist.'
 
     let filePath
     for (let i = 1; i <= 10; i++) {
-      filePath = `${type === 'report' ? 'Report' : 'Schedule'}/${klassenName}/KW${week}_${i}_${year}.pdf`
+      filePath = `${typ === 'bericht' ? 'Bericht' : 'Stundenplan'}/${klassenName}/KW${week}_${i}_${year}.pdf`
       if (!fs.existsSync(filePath))
         break
     }
 
     const file = fs.createWriteStream(filePath)
-    https.get(attachment.url, (response) => {
+    https.get(anhang.url, (response) => {
       response.pipe(file)
       file.on('finish', async () => {
         file.close()
         await interaction.reply({ content: 'File Uploaded!', ephemeral: true })
-        client.channels.cache.get(channelId).send({ content: `New ${type} available for Week ${week}!`, files: [filePath] })
+        client.channels.cache.get(channelId).send({ content: `New ${typ} available for Week ${week}!`, files: [filePath] })
       })
     })
   },
