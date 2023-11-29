@@ -1,16 +1,17 @@
 const fs = require('node:fs')
+const process = require('node:process')
 
-function erstelleordner(class_name) {
-  const path_schedule = `Schedule/${class_name}`
-  const path_report = `Report/${class_name}`
-  if (!fs.existsSync(path_schedule)) {
-    console.log(`Path for ${class_name} Schedules does not exist! Creating...`)
-    fs.mkdirSync(path_schedule, { recursive: true })
+function erstelleordner(klassenzimmer) {
+  const pfad_stundenplan = `${process.cwd()}/Javascript/data/${klassenzimmer}/stundenplan`
+  const pfad_berichtsheft = `${process.cwd()}/Javascript/data/${klassenzimmer}/berichtsheft`
+  if (!fs.existsSync(pfad_stundenplan)) {
+    console.log(`Ordner für ${klassenzimmer} Stundenplan nicht vorhanden! Erstelle...`)
+    fs.mkdirSync(pfad_stundenplan, { recursive: true })
   }
 
-  if (!fs.existsSync(path_report)) {
-    console.log(`Path for ${class_name} Reports does not exist! Creating...`)
-    fs.mkdirSync(path_report, { recursive: true })
+  if (!fs.existsSync(pfad_berichtsheft)) {
+    console.log(`Ordner für ${klassenzimmer} Berichtsheft nicht vorhanden! Erstelle...`)
+    fs.mkdirSync(pfad_berichtsheft, { recursive: true })
   }
 }
 
