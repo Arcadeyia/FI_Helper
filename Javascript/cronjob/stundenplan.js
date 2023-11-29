@@ -1,8 +1,22 @@
 const cron = require('node-cron')
+const woche = require('../functions/woche')
 
-cron.schedule('0 * * * *', () => {
-  console.log('Running Cron Job....')
-  console.log('Downloading Schedule...')
+function cronjob(client, klassenliste) {
+  cron.schedule('0,30 * * * *', () => {
+    const jahr = new Date().getFullYear()
+    console.log(`${client.user.username} Starte Cronjob...`)
+    for (const klasse in klassenliste)
+      klassenliste[klasse].downloadeStundenplan(woche(), jahr)
+  })
 
-  // für jede klasse download stundenplan...
-})
+  cron.schedule('15,45 * * * 5,6,0', () => {
+    const jahr = new Date().getFullYear()
+    console.log(`${client.user.username} Starte Cronjob...`)
+    console.log('Downloading Schedule...')
+
+    for (const klasse in klassenliste)
+      klassenliste[klasse].downloadeStundenplan(woche() + 1, jahr)
+  })
+}
+
+module.exports = cronjob
