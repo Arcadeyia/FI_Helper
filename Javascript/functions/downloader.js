@@ -2,6 +2,7 @@ const https = require('node:https')
 const fs = require('node:fs')
 
 function downloadDatei(url, pfad) {
+  console.log(`Starte download für ${pfad}`)
   const file = fs.createWriteStream(pfad)
   return new Promise((resolve, reject) => {
     try {
