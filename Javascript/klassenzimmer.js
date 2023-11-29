@@ -11,6 +11,58 @@ class Klassenzimmer {
     this.client = client
   }
 
+  sendeAlleDokumente(type, user) {
+    const packete = []
+    const packet = []
+    let count = 0
+    fs.readdirSync(`${process.cwd()}/Javascript/data/${this.klasse}/${type}`).forEach((file) => {
+      count++
+      packet.push(`${process.cwd()}/Javascript/data/${this.klasse}/${type}/${file}`)
+
+      if (count === 10) {
+        packete.push(packet)
+        count = 0
+      }
+    })
+    packete.push(packet)
+
+    count = 0
+    for (const packet of packete) {
+      count++
+      user.send({
+        content: `Verfügbare ${type} Seite: ${count}/${packete.length}`,
+        files: packet,
+      })
+    }
+  }
+
+  sendeWochenDokumente(type, user, woche, jahr) {
+    const packete = []
+    const packet = []
+    let count = 0
+    fs.readdirSync(`${process.cwd()}/Javascript/data/${this.klasse}/${type}`).forEach((file) => {
+      if (file.includes(`KW${woche}`) && file.includes(`${this.klasse}_${jahr}`)) {
+        count++
+        packet.push(`${process.cwd()}/Javascript/data/${this.klasse}/${type}/${file}`)
+      }
+
+      if (count === 10) {
+        packete.push(packet)
+        count = 0
+      }
+    })
+    packete.push(packet)
+
+    count = 0
+    for (const packet of packete) {
+      count++
+      user.send({
+        content: `Verfügbare Dokumente Seite: ${count}/${packete.length}`,
+        files: packet,
+      })
+    }
+  }
+
   downloadeStundenplan(woche, jahr) {
     const url = `https://service.viona24.com/stpusnl/daten/US_IT_2023_Sommer_Aug_${this.klasse}_${jahr}_abKW${woche}.pdf`
     downloader(url, `${process.cwd()}/Javascript/data/${this.klasse}/stundenplan/temp.pdf`).then(pfad =>
