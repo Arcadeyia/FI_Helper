@@ -29,18 +29,24 @@ class Klassenzimmer {
     let count = 1
     const datei_pfad = pfad.replace('temp.pdf', '')
     fs.readdirSync(datei_pfad).forEach((file) => {
-      if (file !== 'temp.pdf' && file.includes(`KW${this.woche}`)) {
-        if (!(hash(pfad, `${datei_pfad}${file}`)))
+      if (file !== 'temp.pdf' && file.includes(`KW${woche}`)) {
+        if (!(hash(pfad, `${datei_pfad}${file}`))) {
           count++
-        else
+        }
+        else {
           console.log(`${this.client.user.username} Gleiche Datei gefunden! Lösche...`)
+          fs.unlinkSync(pfad, (err) => {
+            if (err)
+              console.log(err)
+          })
+        }
       }
     })
 
     if (fs.existsSync(pfad)) {
-      const name = `US_IT_2023_Sommer_Aug_${this.klasse}_${jahr}_abKW${woche}_${count}.pdf`
+      const name = `US_IT_2023_Sommer_Aug_${this.klasse}_${jahr}_abKW${woche}_${count}`
       console.log(`${this.client.user.username} Datei nicht vorhanden! Speichere...`)
-      const neu_pfad = `${datei_pfad}${name}`
+      const neu_pfad = `${datei_pfad}${name}.pdf`
       fs.renameSync(pfad, neu_pfad, (err) => {
         if (err)
           console.log(err)
@@ -58,10 +64,15 @@ class Klassenzimmer {
         type = 'Stundenplan'
       }
 
-      pdfkonverter(neu_pfad, name).then((pfad) => {
-        this.client.channels.cache.get(channelID).send({
+      pdfkonverter(neu_pfad, name).then(async (pfad) => {
+        await this.client.channels.cache.get(channelID).send({
           content: `${type} von Woche ${woche} für ${jahr} verfügbar!`,
           files: [neu_pfad, pfad],
+        })
+
+        fs.unlinkSync(pfad, (err) => {
+          if (err)
+            console.log(err)
         })
       })
     }
