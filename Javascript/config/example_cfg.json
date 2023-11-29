@@ -1,0 +1,52 @@
+{
+  "FIAE_A": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FIAE_B": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FIAE_C": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FIAE_D": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FISI_A.1": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FISI_A.2": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FISI_B": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FISI_C": {
+    "RolenID": "12345678",
+    "StundenplanchannelID": "12345678",
+    "BerichtsheftchannelID": "12345678"
+  },
+  "FISI_D": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  },
+  "FISI_E": {
+    "rolenID": "12345678",
+    "stundenplanchannelID": "12345678",
+    "berichtsheftchannelID": "12345678"
+  }
+}
