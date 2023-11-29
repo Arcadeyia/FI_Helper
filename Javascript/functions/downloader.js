@@ -2,7 +2,7 @@ const https = require('node:https')
 const fs = require('node:fs')
 
 function downloadDatei(url, pfad) {
-  console.log(`Starte download für ${pfad}`)
+  console.log(`Starte download für ${url}`)
   const file = fs.createWriteStream(pfad)
   return new Promise((resolve, reject) => {
     try {
@@ -13,7 +13,7 @@ function downloadDatei(url, pfad) {
         response.pipe(file)
         file.on('finish', () => {
           file.close()
-          console.log(`Download für ${pfad} abgeschlossen.`)
+          console.log(`Download für ${url} abgeschlossen.`)
           resolve(pfad)
         })
       })
