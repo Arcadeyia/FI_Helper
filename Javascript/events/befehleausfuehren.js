@@ -1,6 +1,6 @@
 const { Events } = require('discord.js')
 
-function befehleausfuehren(client) {
+function befehleausfuehren(client, klassenliste) {
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand())
       return
@@ -13,8 +13,17 @@ function befehleausfuehren(client) {
     }
 
     try {
-      // when nicht in einer klasse error--
-      await command.execute(interaction, client)
+      let has_role = false
+      for (const klasse in klassenliste) {
+        if (interaction.member.roles.cache.has(klassenliste[klasse].cfg.rolenID)) {
+          has_role = true
+          await command.execute(interaction, klassenliste[klasse])
+          break
+        }
+      }
+
+      if (!has_role)
+        await interaction.reply({ content: 'Keine Klassen Rolle vorhanden!', ephemeral: true })
     }
     catch (error) {
       console.error(error)
