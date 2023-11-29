@@ -14,9 +14,9 @@ function pdfKonverter(file, name) {
   return new Promise((myResolve, myReject) => {
     pdf.convert(file, opts)
       .then(() => {
-        const pfad = `${dir}/${name.replace('-1', '')}.png`
+        const pfad = `${dir}/${name}.png`
         fs.renameSync(`${dir}/${name}-1.png`, pfad)
-        console.log('Erfolgreich Konvertiert')
+        console.log(`${name} erfolgreich konvertiert zu png`)
         myResolve(pfad)
       })
       .catch((error) => {
