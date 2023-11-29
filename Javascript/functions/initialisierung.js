@@ -10,7 +10,7 @@ function initialisierung(client, cfg) {
   ladeEvents(client, klassenliste)
   ladeOrdner(client, klassenliste)
   ladeCronjobs(client, klassenliste)
-  deploycmd(client)
+  ladeCommands(client)
 }
 
 function ladeEvents(client, klassenliste) {
@@ -42,10 +42,16 @@ function erstelleKlassenzimmer(client, cfg) {
   console.log(`${client.user.username} Erstelle Klassenzimmer...`)
 
   for (const name in cfg)
-    klassenliste[name] = new Klassenzimmer(name, cfg[name])
+    klassenliste[name] = new Klassenzimmer(name, cfg[name], client)
 
   console.log(`${client.user.username} Klassenzimmer erstellt!`)
   return klassenliste
+}
+
+function ladeCommands(client) {
+  console.log(`${client.user.username} Registriere Commands...`)
+  deploycmd(client)
+  console.log(`${client.user.username} Commands Registriert!`)
 }
 
 module.exports = initialisierung
