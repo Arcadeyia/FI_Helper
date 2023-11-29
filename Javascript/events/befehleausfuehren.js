@@ -17,7 +17,7 @@ function befehleausfuehren(client, klassenliste) {
       for (const klasse in klassenliste) {
         if (interaction.member.roles.cache.has(klassenliste[klasse].cfg.rolenID)) {
           has_role = true
-          await command.execute(interaction, klassenliste[klasse])
+          await command.execute(interaction, client, klassenliste[klasse])
           break
         }
       }
