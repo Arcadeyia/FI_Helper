@@ -30,11 +30,11 @@ module.exports = {
     const jahr = interaction.options.getInteger('jahr')
 
     if (subcmd === 'alle') {
-      await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.name} in den DMs!`, ephemeral: true })
+      await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klasse} in den DMs!`, ephemeral: true })
       klasse.sendeAlleDokumente('berichtsheft', interaction.user)
     }
     else {
-      await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.name} der Woche ${woche} in den DMs!`, ephemeral: true })
+      await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klase} der Woche ${woche} in den DMs!`, ephemeral: true })
       klasse.sendeWochenDokumente('berichtsheft', interaction.user, woche, jahr)
     }
   },
