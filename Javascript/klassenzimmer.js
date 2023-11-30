@@ -13,14 +13,14 @@ class Klassenzimmer {
 
   sendeAlleDokumente(type, user) {
     const packete = []
-    const packet = []
+    let packet = []
     let count = 0
     fs.readdirSync(`${process.cwd()}/Javascript/data/${this.klasse}/${type}`).forEach((file) => {
       count++
       packet.push(`${process.cwd()}/Javascript/data/${this.klasse}/${type}/${file}`)
-
       if (count === 10) {
         packete.push(packet)
+        packet = []
         count = 0
       }
     })
@@ -38,7 +38,7 @@ class Klassenzimmer {
 
   sendeWochenDokumente(type, user, woche, jahr) {
     const packete = []
-    const packet = []
+    let packet = []
     let count = 0
     fs.readdirSync(`${process.cwd()}/Javascript/data/${this.klasse}/${type}`).forEach((file) => {
       if (file.includes(`KW${woche}`) && file.includes(`${this.klasse}_${jahr}`)) {
@@ -48,6 +48,7 @@ class Klassenzimmer {
 
       if (count === 10) {
         packete.push(packet)
+        packet = []
         count = 0
       }
     })
