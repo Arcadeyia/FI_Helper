@@ -25,16 +25,21 @@ module.exports = {
             .setDescription('Das gewünschte Jahr des Stundenplanes.')
             .setRequired(true))),
   async execute(interaction, client, klasse) {
+    // Setzte den angegebenen Subcommand
     const subcmd = interaction.options.getSubcommand()
+    // Setzte dir angegebene Woche
     const woche = interaction.options.getInteger('woche')
+    // Setzte das angegebene Jahr
     const jahr = interaction.options.getInteger('jahr')
 
     if (subcmd === 'alle') {
       await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klasse} in den DMs!`, ephemeral: true })
+      //Führt klassenfunktion aus
       klasse.sendeAlleDokumente('stundenplan', interaction.user)
     }
     else {
       await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klasse} der Woche ${woche} in den DMs!`, ephemeral: true })
+      //Führt klassenfunktion aus
       klasse.sendeWochenDokumente('stundenplan', interaction.user, woche, jahr)
     }
   },

@@ -1,5 +1,5 @@
 const { Events } = require('discord.js')
-
+// Registriere Commandhandler - Sorgt dafür das die "execute" funktion in den Commands ausgeführt wird.
 function befehleausfuehren(client, klassenliste) {
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand())

@@ -1,3 +1,4 @@
+// Gibt die momentane Woche wieder
 function diesewoche() {
   const currentDate = new Date()
   const startDate = new Date(currentDate.getFullYear(), 0, 1)

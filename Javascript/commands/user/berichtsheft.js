@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js')
-
+// Erstellung des Commands
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('berichtsheft')
@@ -25,16 +25,23 @@ module.exports = {
             .setDescription('Das gewünschte Jahr des Berichtheftes.')
             .setRequired(true))),
   async execute(interaction, client, klasse) {
+    // Setzt den angegebene Subcommand
     const subcmd = interaction.options.getSubcommand()
+    // Setzt die angegebene Woche
     const woche = interaction.options.getInteger('woche')
+    // Setzt das angegebene Jahr
     const jahr = interaction.options.getInteger('jahr')
-
+    // Wenn man "alle" wählt
     if (subcmd === 'alle') {
+      // Antworte auf den Command
       await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klasse} in den DMs!`, ephemeral: true })
+      // Führt Klassenfunktion aus
       klasse.sendeAlleDokumente('berichtsheft', interaction.user)
     }
     else {
+      // Antworte auf den Command
       await interaction.reply({ content: `Sende Verfügbare PDFs für ${klasse.klase} der Woche ${woche} in den DMs!`, ephemeral: true })
+      // Führt Klassenfunktion aus
       klasse.sendeWochenDokumente('berichtsheft', interaction.user, woche, jahr)
     }
   },

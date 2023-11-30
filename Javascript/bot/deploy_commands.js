@@ -3,6 +3,7 @@ const path = require('node:path')
 const process = require('node:process')
 const { REST, Routes, Collection } = require('discord.js')
 
+//Registrierung der Commands in die Discord API
 function registerCommands(client) {
   client.commands = new Collection()
   const commands = []

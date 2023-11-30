@@ -29,17 +29,26 @@ module.exports = {
         .setDescription('Die PDF der Datei.')
         .setRequired(true)),
   async execute(interaction, client, klasse) {
+    // Setzte angegebene Dokumenten typ
     const type = interaction.options.getString('type')
+    // Setzte die angegebene Woche
     const woche = interaction.options.getInteger('woche')
+    // Setzte das angegebene Jahr
     const jahr = interaction.options.getInteger('jahr')
+    // Setzte den beigefügten Anhang
     const attachment = interaction.options.getAttachment('attachment')
 
+    // Wenn anhang keine .pdf ist
     if (!attachment.name.endsWith('.pdf'))
+      // Antworte auf den command
       return await interaction.reply({ content: `Nur PDFs können hochgeladen werden! Versuche es erneut.`, ephemeral: true })
 
     try {
+      // Antworte auf den Command
       await interaction.reply({ content: `Versuche Hochzuladen...`, ephemeral: true })
+      // Führe Klassenfunktion aus
       klasse.downloadeAttachment(type, attachment.url, woche, jahr)
+      // Editiere die vorherige antwort
       await interaction.editReply({ content: `Hochgeladen!`, ephemeral: true })
     }
     catch (error) {
