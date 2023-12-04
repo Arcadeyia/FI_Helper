@@ -93,7 +93,9 @@ class Klassenzimmer {
     downloader(url, `${process.cwd()}/Javascript/data/${this.klasse}/stundenplan/temp.pdf`).then(pfad =>
       // Vergleiche die datei
       this.vergleicheVorhandeneDateien(pfad, woche, jahr),
-    )
+    ).catch((err)=>{
+      console.log(err)
+    })
   }
 
   // Donwloaded den Anhang beim Hochladen
@@ -102,7 +104,9 @@ class Klassenzimmer {
     downloader(url, `${process.cwd()}/Javascript/data/${this.klasse}/${type}/temp.pdf`).then(pfad =>
       // Vergleiche die datei
       this.vergleicheVorhandeneDateien(pfad, woche, jahr),
-    )
+    ).catch((err) => {
+      console.log(err)
+    })
   }
 
   // Vergleicht die Daten ob doppelte vorhanden sind und passt den index an
