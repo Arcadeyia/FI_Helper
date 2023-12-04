@@ -8,9 +8,8 @@ function downloadDatei(url, pfad) {
   const file = fs.createWriteStream(pfad)
   // Erstellt ein Promise
   return new Promise((resolve, reject) => {
-    try {
       // Fragt via HTTPS die Url an
-      https.get(url, (response) => {
+      const req = https.get(url, (response) => {
         // Falls Statuscode nicht 200 ist
         if (response.statusCode !== 200)
         // Error
@@ -27,12 +26,9 @@ function downloadDatei(url, pfad) {
           resolve(pfad)
         })
       })
-    }
-    catch (error) {
-      console.log(error)
-      reject(error)
-    }
-  })
+    req.on("error", (err) => { reject(err) })
+    }     
+  )
 }
 
 module.exports = downloadDatei
