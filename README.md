@@ -11,18 +11,17 @@ Fachinformatiker Discord Bot befindet sich aktuell in der Alpha-Phase. Es kann s
 
 ## 🚀 Funktionalitäten
 
-- **🔔 Automatische Benachrichtigungen:** Der Bot prüft stündlich, ob ein neuer Stundenplan online ist und sendet dann eine Benachrichtigung im entsprechenden Channel.
-- **📤 Uploads:** Du kannst vergangene oder fehlende Stundenpläne und Berichtshefte mit den Befehlen `/upload schedule` und `/upload report` hochladen.
-- **📋 Anfragen von Dokumenten:** Bereits hochgeladene Berichtshefte und Stundenpläne kannst du mit den Befehlen `/reports` oder `/schedules` anfordern.
+- **🔔 Automatische Benachrichtigungen:** Der Bot prüft jede halbe und volle STunde, ob ein neuer Stundenplan online ist und sendet dann eine Benachrichtigung im entsprechenden Channel.
+- **📤 Uploads:** Du kannst vergangene oder fehlende Stundenpläne und Berichtshefte mit den Befehlen `/hochladen` hochladen.
+- **📋 Anfragen von Dokumenten:** Bereits hochgeladene Berichtshefte und Stundenpläne kannst du mit den Befehlen `/berichtsheft` oder `/stundenplan` anfordern.
 
 ## 📝 Bot-Befehle
 
-- `/upload schedule`: Lade einen Stundenplan hoch 📆. Der Bot benötigt die Kalenderwoche und das Jahr des Dokuments.
-- `/upload report`: Lade ein Berichtsheft hoch 📚. Auch hier sind Kalenderwoche und Jahr erforderlich.
-- `/reports all`: Zeigt alle verfügbaren Berichtshefte an 📖.
-- `/schedules all`: Zeigt alle verfügbaren Stundenpläne an 🗓️.
-- `/reports week [week]`: Fragt Berichtshefte für eine bestimmte Woche ab 🗂️.
-- `/schedules week [week]`: Fragt Stundenpläne für eine bestimmte Woche ab 📅.
+- `/hochladen`: Lade ein Dokument hoch 📆. Der Bot benötigt die Arte des Dokumentes(Stundenplan/Berichtsheft) die Kalenderwoche ,das Jahr und die PDF des Dokuments.
+- `/berichtsheft alle`: Zeigt alle verfügbaren Berichtshefte an 📖.
+- `/stundenplan alle`: Zeigt alle verfügbaren Stundenpläne an 🗓️.
+- `/berichtsheft woche`: Fragt Berichtshefte für eine bestimmte Woche ab 🗂️.Der Bot benötigt die Kalenderwoche und das Jahr des Dokuments.
+- `/stundenplan woche`: Fragt Stundenpläne für eine bestimmte Woche ab 📅.Der Bot benötigt die Kalenderwoche und das Jahr des Dokuments.
 
 ## 💬 Support & Feedback
 
